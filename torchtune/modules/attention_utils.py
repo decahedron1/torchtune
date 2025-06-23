@@ -23,7 +23,7 @@ if _SUPPORTS_FLEX_ATTENTION:
     )
 
     def compile_flex_attention():
-        return torch.compile(flex_attention, dynamic=False, mode="max-autotune")
+        return torch.compile(flex_attention, dynamic=False, mode="max-autotune-no-cudagraphs")
 
     flex_attention_compiled = compile_flex_attention()
 
