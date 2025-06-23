@@ -23,23 +23,7 @@ if _SUPPORTS_FLEX_ATTENTION:
     )
 
     def compile_flex_attention():
-        try:
-            return torch.compile(flex_attention, dynamic=False, mode="max-autotune")
-        except Exception as e:
-            # It may fail on some combinations of hardware/versions. Using max-autotune fixes this issue.
-            # Context: https://github.com/pytorch/torchtune/issues/2113
-            _log.info(
-                f"Compiling flex_attention failed with error '{e}'. Retrying with mode='max-autotune'."
-            )
-            try:
-                return torch.compile(flex_attention, mode="max-autotune")
-            except Exception as e:
-                _log.info(
-                    f"Compiling flex_attention failed with error: '{e}', "
-                    "Updating your pytorch version to nightlies may solve it, or you can set"
-                    "in your config dataset.packed=False to avoid using flex attention."
-                )
-                raise
+        return torch.compile(flex_attention, dynamic=False, mode="max-autotune")
 
     flex_attention_compiled = compile_flex_attention()
 
@@ -54,7 +38,20 @@ if _SUPPORTS_FLEX_ATTENTION:
         v: torch.Tensor,
         block_mask: BlockMask,
     ) -> torch.Tensor:
-        return flex_attention_compiled(q, k, v, block_mask=block_mask)
+        return flex_attention_compiled(
+            q,
+            k,
+            v,
+            block_mask=block_mask,
+            kernel_options={
+                "BLOCK_M": 32,
+                "BLOCK_N": 32,
+                "BLOCK_M1": 32,
+                "BLOCK_N1": 32,
+                "BLOCK_M2": 32,
+                "BLOCK_N2": 32
+            }
+        )
 
     _MaskType = Union[torch.Tensor, BlockMask]
 else:
