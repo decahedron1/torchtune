@@ -44,12 +44,12 @@ if _SUPPORTS_FLEX_ATTENTION:
             v,
             block_mask=block_mask,
             kernel_options={
-                "BLOCK_M": 32,
-                "BLOCK_N": 32,
-                "BLOCK_M1": 32,
-                "BLOCK_N1": 32,
-                "BLOCK_M2": 32,
-                "BLOCK_N2": 32
+                "BLOCK_M": 16,
+                "BLOCK_N": 16,
+                "BLOCK_M1": 16,
+                "BLOCK_N1": 16,
+                "BLOCK_M2": 16,
+                "BLOCK_N2": 16
             }
         )
 
