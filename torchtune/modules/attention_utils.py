@@ -24,7 +24,7 @@ if _SUPPORTS_FLEX_ATTENTION:
 
     def compile_flex_attention():
         try:
-            return torch.compile(flex_attention)
+            return torch.compile(flex_attention, dynamic=False, mode="max-autotune")
         except Exception as e:
             # It may fail on some combinations of hardware/versions. Using max-autotune fixes this issue.
             # Context: https://github.com/pytorch/torchtune/issues/2113
